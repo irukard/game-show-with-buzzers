@@ -51,11 +51,14 @@ class Game(tk.Tk):
     def next_round(self):
         for team in self.teams:
             team.unlock_team()
-        self.controlers.buzzers_blink(3)
+        self.controlers.buzzers_blink(2)
         self.we_got_buzz = False
 
     def round_again(self):
-        self.controlers.buzzers_blink(3)
+        for team in self.teams:
+            if team.is_unlocked():
+                team.unlock_team()
+        self.controlers.buzzers_blink(2)
         self.we_got_buzz = False
 
     def respond_to_buzz(self, _, id: int):
