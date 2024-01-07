@@ -1,3 +1,5 @@
 hidapi==0.14.0
-pybuzzers==1.0.4
-PyAutoGUI==0.9.54
+pybuzzers==1.0.5
+
+# PyAutoGUI for multimedia keys
+# PyAutoGUI==0.9.54
