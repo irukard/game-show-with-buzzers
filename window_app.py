@@ -24,7 +24,7 @@ class Game(tk.Tk):
         self.frame_center.pack(side="top", pady=(150,100))
         self.we_got_buzz = False
         self.round_number = 1
-        self.round_title = tk.StringVar()
+        self.round_title = tk.StringVar(master=self)
         self.round_title.set(f"Round {self.round_number}")
 
         self.label_round_number = ttk.Label(master=self.frame_center,
