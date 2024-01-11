@@ -1,6 +1,6 @@
 class Color:
     RED = "\033[31m"
-    GREEN = "\033[91m"
+    GREEN = "\033[31m"
     YELLOW = "\033[33m"
     BLUE = "\033[34m"
     PURPLE = "\033[35m"
