@@ -4,12 +4,17 @@ class Lang:
     ROUND = "Runda"
     SONG = "Utwór"
     TEAM = "Drużyna"
+    WINNER = "Wygrywa"
     
     GMCP_WINDOW_TITLE = "Jaka to melodia?! Panel Mistrza Gry"
-    GMCP_BUTTON_TRY_AGAIN = "▶ Spróbuj ponownie"
-    GMCP_BUTTON_NEXT_TURN = "⏩ Następna runda"
+    GMCP_BUTTON_PREV_SONG = "⏪ Poprzedni utwór"
+    GMCP_BUTTON_TRY_AGAIN = "🔄 Spróbuj ponownie"
+    GMCP_BUTTON_NEXT_SONG = "Następny utwór ⏩"
+    GMCP_BUTTON_PREV_ROUND = "⏪ Poprzednia runda"
+    GMCP_BUTTON_NEXT_ROUND = "Następna runda ⏩"
     GMCP_BUTTON_LOCK = "Zablokuj"
     GMCP_BUTTON_UNLOCK = "Odblokuj"
+    GMCP_BUTTON_END_GAME = "Zakończ grę"
     
     PRESENTATION_WINDOW_TITLE = "Jaka to melodia?! (F11 - pełny ekran)"
     
