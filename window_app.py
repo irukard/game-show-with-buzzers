@@ -8,6 +8,9 @@ import sys
 import winsound
 import threading
 
+from lang.en import Lang
+#from lang.pl import Lang
+
 # import pyautogui
 # Use multimedia keys to control media player: pyautogui.press("nexttrack")
 # Works with Spotify on Windows
@@ -15,6 +18,13 @@ import threading
 
 # Enable colors support in terminal
 os.system("")
+
+# Nice colors:
+#red    #ff595e
+#yellow #ffca3a
+#green  #8ac926
+#blue   #1982c4
+#violet #6a4c93
 
 class Game(tk.Tk):
     def __init__(self, number_of_teams: int):
@@ -24,17 +34,17 @@ class Game(tk.Tk):
         self.full_screen_enabled = False
         self.round_number = 1
         self.round_description = tk.StringVar(master=self)
-        self.round_description.set(f"Round {self.round_number}")
+        self.round_description.set(f"{Lang.ROUND} {self.round_number}")
         self.song_number = 1
         self.song_description = tk.StringVar(master=self)
-        self.song_description.set(f"Song {self.round_number}")
+        self.song_description.set(f"{Lang.SONG} {self.round_number}")
         self.validate_number_of_teams(number_of_teams)
         self.teams = []
         
         # Game Master Control Panel window
-        self.title("Name That Tune! Game Master Control Panel")
+        self.title(Lang.GMCP_WINDOW_TITLE)
         self.geometry("1200x600")
-        self.state("icon")
+        #self.state("icon")
         self.frame_center = tk.Frame(master=self)
         self.frame_center.pack(side="top", pady=(50,50))
         self.label_gmcp_round_number = tk.Label(master=self.frame_center,
@@ -50,13 +60,13 @@ class Game(tk.Tk):
         
         self.frame_management = tk.Frame(master=self)
         self.button_next_turn = tk.Button(master=self.frame_management,
-                                           text="▶ Try again",
+                                           text=Lang.GMCP_BUTTON_TRY_AGAIN,
                                            command=self.round_again,
                                            padx=7,
                                            pady=7)
         self.button_next_turn.pack(side="left", padx=15)
         self.button_next_turn = tk.Button(master=self.frame_management,
-                                           text="⏩ Next round",
+                                           text=Lang.GMCP_BUTTON_NEXT_TURN,
                                            command=self.next_round,
                                            padx=7,
                                            pady=7,
@@ -66,7 +76,7 @@ class Game(tk.Tk):
         
         # Presentation window with fulscreen option
         self.presentation = tk.Toplevel(master = self)
-        self.presentation.title("Name That Tune! (F11 to fullscreen)")
+        self.presentation.title(Lang.PRESENTATION_WINDOW_TITLE)
         self.presentation.geometry("1600x900")
         self.presentation.bind("<F11>", self.toggle_fullscreen)
         self.presentation.bind("<Escape>", self.exit_fullscreen)
@@ -91,7 +101,7 @@ class Game(tk.Tk):
         self.canvas.create_window(960, 350, window=self.frame_center_presentation, anchor="n")
 
         for i in range(number_of_teams):
-            self.teams.append(Team(self, f"Team {chr(65+i)}"))
+            self.teams.append(Team(self, f"{Lang.TEAM} {chr(65+i)}"))
         
         self.buzzers_run_service()
     
@@ -117,7 +127,7 @@ class Game(tk.Tk):
         for team in self.teams:
             team.unlock_team()
         self.round_number += 1
-        self.round_description.set(f"Round {self.round_number}")
+        self.round_description.set(f"{Lang.ROUND} {self.round_number}")
         threading.Thread(target=self.buzzers_blink_active, args=[2]).start()
         self.we_got_buzz = False
 
@@ -138,20 +148,20 @@ class Game(tk.Tk):
 
     def validate_number_of_teams(self, number_of_teams: int):
             if number_of_teams < 1:
-                sys.exit(f"{Color.RED_HI}Error: You need at least one team to play{Color.RESET}")
+                sys.exit(f"{Color.RED_HI}{Lang.ERROR_NOT_ENOUGH_PLAYERS}{Color.RESET}")
             if number_of_teams > 4:
-                sys.exit(f"{Color.RED_HI}Error: Sorry, but game only supports up to 4 players.{Color.RESET}")
+                sys.exit(f"{Color.RED_HI}{Lang.ERROR_TOO_MANY_PLAYERS}{Color.RESET}")
 
     def buzzers_run_service(self):
         # Create instance
         try:
             self.controllers = pybuzzers.get_all_buzzers()[0]
         except IndexError:
-            sys.exit(f"{Color.RED_HI}Error: No buzzers were detected{Color.RESET}\n"+
-                     f"{Color.YELLOW_HI}Please connect receiver and run program again.{Color.RESET}")
+            sys.exit(f"{Color.RED_HI}{Lang.ERROR_BUZZERS_NOT_DETECTED}{Color.RESET}\n"+
+                     f"{Color.YELLOW_HI}{Lang.ERROR_BUZZERS_NOT_DETECTED_HINT}{Color.RESET}")
         else:
-            print(f"{Color.GREEN_HI}Buzzers detected{Color.RESET}")
-            print("Please make sure that all buzzers blink.")
+            print(f"{Color.GREEN_HI}{Lang.SUCCESS_BUZZERS_DETECTED}{Color.RESET}")
+            print(f"{Color.YELLOW_HI}{Lang.SUCCESS_BUZZERS_DETECTED_HINT}{Color.RESET}")
             self.buzzers_blink_all(2)
             self.buzzers_sweep_all(2)
         # Register callback
@@ -216,10 +226,9 @@ class Team():
         self.frame_team_presentation.pack(side="left")
         
         # This frame will be displayed in Game Master Control Panel
-        self.frame_team_gmcp = tk.Frame(master=window.frame_center)
-        
-        self.frame_name_config = tk.Frame(master=self.frame_team_gmcp)
-        self.field_team_name = tk.Entry(master = self.frame_name_config,
+        self.frame_gmcp_team = tk.Frame(master=window.frame_center)
+        self.frame_gmcp_name = tk.Frame(master=self.frame_gmcp_team)
+        self.field_team_name = tk.Entry(master = self.frame_gmcp_name,
                                         textvariable = self.team_name,
                                         width=20,
                                         relief="flat",
@@ -228,37 +237,46 @@ class Team():
                                         background="#ffffff",
                                         font="Bahnschrift 14")
         self.field_team_name.pack()
-        self.frame_name_config.pack(padx=20)
+        self.frame_gmcp_name.pack(padx=20, pady=10)
         
-        self.frame_control = tk.Frame(master=self.frame_team_gmcp)
-
-        self.button_rem = tk.Button(master=self.frame_control,
+        self.frame_gmcp_score_control = tk.Frame(master=self.frame_gmcp_team)
+        self.button_rem = tk.Button(master=self.frame_gmcp_score_control,
                                     text="➖",
                                     command=self.loose_point,
-                                    background="red",
+                                    background="#ff595e", # red
+                                    relief="flat",
                                     padx=10,
                                     pady=10)
         self.button_rem.pack(side = "left", padx=5) 
-
-        self.button_lock = tk.Button(master=self.frame_control,
-                                text="Lock",
-                                background="yellow",
-                                command=self.lock_and_unlock,
-                                padx=10,
-                                pady=10,
-                                width=6)
-        self.button_lock.pack(side = "left", padx=5)
-
-        self.button_add = tk.Button(master=self.frame_control,
+        self.label_gmcp_team_score = tk.Label(master=self.frame_gmcp_score_control,
+                                         font="Bahnschrift 32 bold",
+                                         justify="center",
+                                         width=2,
+                                         textvariable=self.team_score)
+        self.label_gmcp_team_score.pack(side = "left", padx=5)
+        self.button_add = tk.Button(master=self.frame_gmcp_score_control,
                                     text="➕",
-                                    background="green",
+                                    background="#8ac926", # green
+                                    relief="flat",
                                     command=self.add_point,
                                     padx=10,
                                     pady=10)
         self.button_add.pack(side = "left", padx=5)
-        self.frame_control.pack(pady=20)
+        self.frame_gmcp_score_control.pack(padx=20, pady=10)
         
-        self.frame_team_gmcp.pack(side="left")
+        self.frame_gmcp_lock_control = tk.Frame(master=self.frame_gmcp_team)
+        self.button_lock = tk.Button(master=self.frame_gmcp_lock_control,
+                                text=Lang.GMCP_BUTTON_LOCK,
+                                background="#ffca3a", # yellow
+                                relief="flat",
+                                command=self.lock_and_unlock,
+                                padx=10,
+                                pady=10,
+                                width=8)
+        self.button_lock.pack()
+        self.frame_gmcp_lock_control.pack(padx=20, pady=10)
+
+        self.frame_gmcp_team.pack(side="left")
         
     def add_point(self):
         self.team_score.set(self.team_score.get() + 1)
@@ -276,7 +294,7 @@ class Team():
     def lock_team(self):
         self.label_team_name.configure(foreground="#5d31b0")
         self.label_team_score.configure(foreground="#5d31b0")
-        self.button_lock.configure(text="Unlock")
+        self.button_lock.configure(text=Lang.GMCP_BUTTON_UNLOCK)
         self.field_team_name.configure(background="#bdbdbd")
         self.team_locked.set(True)
 
@@ -284,12 +302,13 @@ class Team():
         self.label_team_name.configure(foreground="#ffffff")
         self.label_team_score.configure(foreground="#ffffff")
         self.field_team_name.configure(background="#ffffff")
-        self.button_lock.configure(text="Lock")
+        self.button_lock.configure(text=Lang.GMCP_BUTTON_LOCK)
         self.team_locked.set(False)
 
     def mark_team(self):
         self.label_team_name.configure(foreground="#ebdc24")
         self.label_team_score.configure(foreground="#ebdc24")
+        self.field_team_name.configure(background="orange")
 
     def is_unlocked(self):
         if not self.team_locked.get():
